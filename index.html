@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MR Digital Mobile Studio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background-color: #0d47a1;
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .user-status {
+            font-weight: bold;
+            color: #ffeb3b;
+        }
+        .btn-logout {
+            background: #e53935;
+            color: white;
+            border: none;
+            padding: 7px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1565c0, #1e88e5);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+
+        /* Success & Error Alert Messages */
+        .msg-box {
+            display: none;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        .msg-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .msg-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Side-by-Side Auth Cards */
+        .auth-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 20px 0;
+        }
+        .auth-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .auth-card.signin {
+            border-top: 5px solid #0d47a1;
+        }
+        .auth-card.signup {
+            border-top: 5px solid #ff9800;
+        }
+        .auth-card h2 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        /* Inputs & Buttons */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #444;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #1976d2;
+        }
+        .btn-blue {
+            background-color: #0d47a1;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-orange {
+            background-color: #ff9800;
+            color: #000;
+            border: none;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-submit {
+            background-color: #25d366;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Portal Content */
+        #portalContent {
+            display: none;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 1.7rem;
+            color: #0d47a1;
+            margin: 30px 0 20px;
+            position: relative;
+        }
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background: #ff9800;
+            margin: 8px auto 0;
+            border-radius: 2px;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+            border-top: 4px solid #1976d2;
+        }
+        .card h3 {
+            font-size: 1.2rem;
+            color: #1976d2;
+            margin-bottom: 12px;
+        }
+        .card ul {
+            list-style: none;
+        }
+        .card ul li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 20px;
+            color: #444;
+        }
+        .card ul li::before {
+            content: '✔️';
+            color: #4caf50;
+            position: absolute;
+            left: 0;
+        }
+        .box-container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+            margin-top: 20px;
+        }
+
+        /* Reviews */
+        .review-item {
+            background: #fafafa;
+            border-left: 4px solid #ff9800;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 4px;
+        }
+        .review-item h4 {
+            color: #333;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .stars {
+            color: #ff9800;
+        }
+        .btn-call {
+            display: inline-block;
+            margin: 8px 5px;
+            padding: 10px 18px;
+            background-color: #0d47a1;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        /* Admin Section */
+        .admin-box {
+            background: white;
+            border-top: 5px solid #d32f2f;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+        .admin-table th, .admin-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .admin-table th {
+            background-color: #0d47a1;
+            color: white;
+        }
+        .admin-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .badge-login {
+            background-color: #4caf50;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        .badge-logout {
+            background-color: #f44336;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        .badge-signup {
+            background-color: #ff9800;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            background-color: #263238;
+            color: #cfd8dc;
+            margin-top: 50px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Status Bar -->
+    <div class="top-bar">
+        <div><strong>MR Digital Mobile Studio</strong></div>
+        <div>
+            <span id="userStatus" class="user-status">লগইন করা নেই</span>
+            <button id="logoutBtn" class="btn-logout" style="display: none; margin-left: 10px;" onclick="handleLogout()">লগআউট</button>
+        </div>
+    </div>
+
+    <header>
+        <h1>MR Digital Mobile Studio</h1>
+        <p>মোবাইল এক্সেসরিজ, সিম পোর্ট ও ডিজিটাল ব্যাংকিং সেবা কেন্দ্র</p>
+    </header>
+
+    <div class="container">
+
+        <!-- 1. AUTH SCREEN -->
+        <div id="authScreen">
+            <h2 class="section-title">কাস্টমার পোর্টাল এক্সেস</h2>
+            <div class="auth-grid">
+                
+                <!-- Sign In Card -->
+                <div class="auth-card signin">
+                    <h2 style="color: #0d47a1;">🔑 সাইন ইন (লগইন)</h2>
+                    
+                    <!-- Message container for Login -->
+                    <div id="loginMsg" class="msg-box"></div>
+
+                    <form onsubmit="handleLogin(event)">
+                        <div class="form-group">
+                            <label>ইউজারনেম:</label>
+                            <input type="text" id="loginUser" placeholder="ইউজারনেম লিখুন" required>
+                        </div>
+                        <div class="form-group">
+                            <label>পাসওয়ার্ড:</label>
+                            <input type="password" id="loginPass" placeholder="পাসওয়ার্ড দিন" required>
+                        </div>
+                        <button type="submit" class="btn-blue">লগইন করুন</button>
+                    </form>
+                </div>
+
+                <!-- Sign Up Card -->
+                <div class="auth-card signup">
+                    <h2 style="color: #ff9800;">📝 নতুন একাউন্ট (সাইন আপ)</h2>
+
+                    <!-- Message container for Sign Up -->
+                    <div id="signupMsg" class="msg-box"></div>
+
+                    <form onsubmit="handleSignup(event)">
+                        <div class="form-group">
+                            <label>নতুন ইউজারনেম:</label>
+                            <input type="text" id="regUser" placeholder="ইংরেজি বা বাংলায় ইউজারনেম" required>
+                        </div>
+                        <div class="form-group">
+                            <label>মোবাইল নম্বর:</label>
+                            <input type="tel" id="regPhone" placeholder="১০ ডিজিট মোবাইল নম্বর" required>
+                        </div>
+                        <div class="form-group">
+                            <label>পাসওয়ার্ড:</label>
+                            <input type="password" id="regPass" placeholder="নতুন পাসওয়ার্ড লিখুন" required>
+                        </div>
+                        <button type="submit" class="btn-orange">সাইন আপ করুন</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 2. PORTAL CONTENT -->
+        <div id="portalContent">
+
+            <!-- Welcome Box -->
+            <div class="box-container" style="background-color: #e8f5e9; border: 1px solid #c8e6c9; text-align: center;">
+                <h3 id="welcomeHeader" style="color: #2e7d32;">স্বাগতম!</h3>
+                <p>আপনি সফলভাবে লগইন করেছেন। নিচে সেবার তালিকা দেখুন এবং সরাসরি অর্ডার করুন।</p>
+            </div>
+
+            <!-- Services -->
+            <h2 class="section-title">আমাদের সেবাসমূহ</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>📱 মোবাইল এক্সেসরিজ</h3>
+                    <ul>
+                        <li>ফাস্ট চার্জার ও টাইপ-সি কেবল</li>
+                        <li>টেম্পার্ড গ্লাস ও ব্যাক কভার</li>
+                        <li>ব্লুটুথ ইয়ারফোন ও হেডফোন</li>
+                        <li>মেমোরি কার্ড ও ওটিজি কেবল</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>📶 সিম ও রিচার্জ সেবা</h3>
+                    <ul>
+                        <li>নতুন প্রিপেইড সিম এক্টিভেশন</li>
+                        <li>নম্বর ঠিক রেখে সিম পোর্ট (MNP)</li>
+                        <li>সব কোম্পানির ইনস্ট্যান্ট রিচার্জ</li>
+                        <li>DTH (টিভি) রিচার্জ সুবিধা</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>💳 ডিজিটাল ব্যাংকিং সেবা</h3>
+                    <ul>
+                        <li>আধার কার্ড দিয়ে টাকা তোলা (AEPS)</li>
+                        <li>মাইক্রো এটিএম ক্যাশ উত্তোলন</li>
+                        <li>যেকোনো ব্যাংক অ্যাকাউন্টে মানি ট্রান্সফার</li>
+                        <li>ব্যালেন্স চেক ও মিনি স্টেটমেন্ট</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Order Form -->
+            <h2 class="section-title">অর্ডার বা বুকিং ফর্ম</h2>
+            <div class="box-container">
+                <form onsubmit="sendWhatsAppOrder(event)">
+                    <div class="form-group">
+                        <label>কাস্টমারের ইউজারনেম:</label>
+                        <input type="text" id="custName" readonly style="background-color: #f5f5f5;">
+                    </div>
+                    <div class="form-group">
+                        <label>মোবাইল নম্বর:</label>
+                        <input type="tel" id="custPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>পণ্য বা সেবা নির্বাচন করুন:</label>
+                        <select id="serviceType" required>
+                            <option value="">নির্বাচন করুন</option>
+                            <option value="মোবাইল এক্সেসরিজ (চার্জার/কভার)">মোবাইল এক্সেসরিজ</option>
+                            <option value="নতুন সিম কার্ড">নতুন সিম কার্ড</option>
+                            <option value="সিম পোর্ট (MNP)">সিম পোর্ট (MNP)</option>
+                            <option value="মোবাইল/DTH রিচার্জ">মোবাইল বা DTH রিচার্জ</option>
+                            <option value="ব্যাংকিং / টাকা তোলা বা পাঠানো">ব্যাংকিং সেবা</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>অর্ডারের বিস্তারিত বিবরণ:</label>
+                        <textarea id="orderDetails" rows="3" placeholder="প্রয়োজনীয় মডেল বা বিস্তারিত লিখুন..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">💬 WhatsApp-এ সরাসরি অর্ডার পাঠান</button>
+                </form>
+            </div>
+
+            <!-- Reviews -->
+            <h2 class="section-title">কাস্টমার মতামত</h2>
+            <div class="box-container">
+                <form onsubmit="addReview(event)">
+                    <div class="form-group">
+                        <label>রেটিং দিন:</label>
+                        <select id="revRating">
+                            <option value="⭐⭐⭐⭐⭐">⭐⭐⭐⭐⭐ (অসাধারণ)</option>
+                            <option value="⭐⭐⭐⭐">⭐⭐⭐⭐ (ভালো)</option>
+                            <option value="⭐⭐⭐">⭐⭐⭐ (মোটামুটি)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>আপনার মতামত:</label>
+                        <textarea id="revComment" rows="2" placeholder="আমাদের সার্ভিস সম্পর্কে লিখুন..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-blue">মতামত জমা দিন</button>
+                </form>
+
+                <div class="review-list" id="reviewContainer" style="margin-top: 20px;">
+                    <div class="review-item">
+                        <h4><span>সেখ রহমান</span> <span class="stars">⭐⭐⭐⭐⭐</span></h4>
+                        <p>খুব দ্রুত সিম পোর্ট করিয়ে দিয়েছিল। সার্ভিস খুব ভালো।</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Box -->
+            <h2 class="section-title">যোগাযোগ ও ঠিকানা</h2>
+            <div class="box-container" style="text-align: center;">
+                <p><strong>দোকান:</strong> MR Digital Mobile Studio</p>
+                <p><strong>ঠিকানা:</strong> তিয়ারপাড়া, ব্রাহ্মণগ্রাম, মানিকচক, মালদা — ৭৩২২০৪</p>
+                <div style="margin-top: 15px;">
+                    <a href="tel:9932010732" class="btn-call">📞 9932010732</a>
+                    <a href="tel:8942995395" class="btn-call">📞 8942995395</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 3. ADMIN PANEL -->
+        <div class="admin-box">
+            <h2 style="color: #d32f2f; margin-bottom: 10px;">🔐 এডমিন প্যানেল (লগইন/লগআউট হিস্ট্রি)</h2>
+            
+            <div id="adminLoginForm" style="max-width: 400px; margin: 15px 0;">
+                <label>এডমিন পাসওয়ার্ড দিন:</label>
+                <div style="display: flex; gap: 10px; margin-top: 5px;">
+                    <input type="password" id="adminPassInput" placeholder="পাসওয়ার্ড লিখুন">
+                    <button type="button" class="btn-blue" style="width: auto; padding: 10px 20px;" onclick="checkAdminPassword()">লগইন</button>
+                </div>
+                <small style="color: #666;">ডিফল্ট পাসওয়ার্ড: <b>admin123</b></small>
+            </div>
+
+            <div id="adminDataArea" style="display: none; margin-top: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <p style="color: #333; font-weight: bold;">কাস্টমারদের কার্যক্রমের সম্পূর্ণ রেকর্ড:</p>
+                    <button onclick="closeAdminView()" style="background:#666; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">লুকান</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ইউজারনেম</th>
+                                <th>মোবাইল নম্বর</th>
+                                <th>অ্যাকশন</th>
+                                <th>তারিখ ও সময়</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminHistoryTable">
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 15px; text-align: right;">
+                    <button onclick="clearHistory()" style="background:#e53935; color:white; border:none; padding:8px 14px; border-radius:4px; cursor:pointer;">হিস্ট্রি মুছে ফেলুন</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 MR Digital Mobile Studio. সর্বস্বত্ব সংরক্ষিত।</p>
+    </footer>
+
+    <!-- Logic Script -->
+    <script>
+        // Log Tracker
+        function recordLog(username, phone, action) {
+            let logs = JSON.parse(localStorage.getItem('mrd_user_activity_logs')) || [];
+            const now = new Date();
+            const timestamp = now.toLocaleDateString('bn-BD', {
+                year: 'numeric', month: 'short', day: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+
+            logs.unshift({
+                username: username,
+                phone: phone || 'N/A',
+                action: action,
+                time: timestamp
+            });
+
+            localStorage.setItem('mrd_user_activity_logs', JSON.stringify(logs));
+        }
+
+        // Helper to Show Notification Messages
+        function showMessage(elementId, text, isSuccess) {
+            const el = document.getElementById(elementId);
+            el.textContent = text;
+            el.className = 'msg-box ' + (isSuccess ? 'msg-success' : 'msg-error');
+            el.style.display = 'block';
+        }
+
+        // 1. Sign Up Handler
+        function handleSignup(event) {
